@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kanban Card Moving</title>
+
+    <!-- head -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../helpers/v2/main.css?v=2025.4.6765" type="text/css" rel="stylesheet"/>
+    <script src="../js/daypilot-all.min.js?v=2025.4.6765"></script>
+
+    <!-- /head -->
+
+</head>
+<body>
+
+<!-- top -->
+<template id="content" data-version="2025.4.6765">
+
+    <!-- /top -->
+
+    <div class="note">This example displays a label with the target position during card moving. It prevents column skipping. Read more about Kanban <a href="https://doc.daypilot.org/kanban/card-moving-customization/">card
+        moving customization</a> [doc.daypilot.org].
+    </div>
+
+    <div id="kanban"></div>
+
+    <script type="text/javascript">
+
+        const kanban = new DayPilot.Kanban("kanban", {
+            onCardMoved: (args) => {
+                console.log(args);
+                kanban.message("Moved");
+            },
+            onCardMoving: args => {
+                const targetColumnIndex = kanban.columns.list.findIndex(c => c.id === args.column.data.id);
+                const isLastColumn = targetColumnIndex === kanban.columns.list.length - 1;
+
+                const sourceColumnIndex = kanban.columns.list.findIndex(c => c.id === args.card.data.column);
+
+                let message = "Moving card to column: " + args.column.data.name + ", position: " + args.position;
+
+                // prevent skipping a column
+                if (sourceColumnIndex + 1 < targetColumnIndex) {
+                    args.allowed = false;
+                    message = "Cannot skip columns.";
+                }
+
+                const label = isLastColumn ? args.left : args.right;
+                label.enabled = true;
+                label.html = message;
+
+            }
+        });
+        kanban.init();
+
+        const app = {
+            loadData() {
+                const columns = [
+                    {name: "Analysis", id: "1", barColor: "#f9ba25"},
+                    {name: "Draft", id: "2"},
+                    {name: "Testing", id: "3"},
+                    {name: "Implementation", id: "4"},
+                    {name: "Review", id: "5"},
+                    {name: "Deployment", id: "6"},
+                    {name: "Feedback", id: "7"},
+                    {name: "Support", id: "8"},
+                    {name: "Maintenance", id: "9"}
+                ];
+                const cards = [
+                    {id: 1, "name": "Task 1", column: "1", text: "This is a description of task #1."},
+                    {id: 2, "name": "Task 2", column: "1", text: "This is a description of task #2.", barColor: "#b62c1f"},
+                    {id: 3, "name": "Task 3", column: "2", text: "This is a description of task #3.", barColor: "#3d8d66"},
+                    {id: 4, "name": "Task 4", column: "3", text: "This is a description of task #4.", barColor: "#999"},
+                    {id: 5, "name": "Task 5", column: "3", text: "This is a description of task #5.", barColor: "#41946d"},
+                    {id: 6, "name": "Task 6", column: "4", text: "This is a description of task #6.", barColor: "#F9BA25"},
+
+                ];
+                kanban.update({columns, cards});
+            },
+            editCard(card) {
+                const form = [
+                    {id: "name", name: "Name", type: "text"},
+                    {id: "text", name: "Description", type: "textarea"}
+                ];
+                DayPilot.Modal.form(form, card.data).then(modal => {
+                    if (modal.canceled) {
+                        return;
+                    }
+                    card.data.name = modal.result.name;
+                    card.data.text = modal.result.text;
+                    kanban.cards.update(card);
+                });
+            },
+            init() {
+                this.loadData();
+            }
+        };
+        app.init();
+
+    </script>
+
+    <!-- bottom -->
+</template>
+
+<script src="../helpers/v2/app.js?v=2025.4.6765"></script>
+<!-- /bottom -->
+
+</body>
+</html>
+

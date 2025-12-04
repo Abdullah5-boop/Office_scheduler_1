@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Navigator (JavaScript Scheduler)</title>
+
+    <!-- head -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../helpers/v2/main.css?v=2025.4.6765" type="text/css" rel="stylesheet"/>
+    <script src="../js/daypilot-all.min.js?v=2025.4.6765"></script>
+
+    <!-- /head -->
+</head>
+<body>
+
+<!-- top -->
+<template id="content" data-version="2025.4.6765">
+
+    <!-- /top -->
+
+    <div class="note">Read more about integrating the <a
+        href="https://doc.daypilot.org/scheduler/navigator/">date navigator</a> [doc.daypilot.org].
+    </div>
+
+
+    <div style="display: flex;">
+        <div style="margin-right: 10px;">
+            <div id="nav"></div>
+        </div>
+        <div style="flex-grow: 1;">
+            <div id="dp"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        const nav = new DayPilot.Navigator("nav", {
+            showMonths: 3,
+            selectMode: "Month",
+            onTimeRangeSelected: args => {
+                dp.startDate = args.start;
+                dp.days = args.days;
+                dp.update();
+            },
+        });
+        nav.init();
+
+        const dp = new DayPilot.Scheduler("dp", {
+            startDate: DayPilot.Date.today().firstDayOfMonth(),
+            cellGroupBy: "Month",
+            days: DayPilot.Date.today().daysInMonth(),
+            scale: "Day",
+            cellWidthSpec: "Auto",
+            timeHeaders: [
+                {groupBy: "Month"},
+                {groupBy: "Day", format: "d"}
+            ],
+            resources: [
+                {name: "Room A", id: "A"},
+                {name: "Room B", id: "B"},
+                {name: "Room C", id: "C"},
+                {name: "Room D", id: "D"},
+                {name: "Room E", id: "E"},
+                {name: "Room F", id: "F"}
+            ],
+            onTimeRangeSelected: async args => {
+                const modal = await DayPilot.Modal.prompt("New event name:", "Event");
+                dp.clearSelection();
+                if (modal.canceled) return;
+                dp.events.add({
+                    start: args.start,
+                    end: args.end,
+                    id: DayPilot.guid(),
+                    resource: args.resource,
+                    text: modal.result || "Event" // Fallback to "Event" if name is not provided
+                });
+                dp.message("Created");
+            }
+        });
+        dp.init();
+
+        const app = {
+            init() {
+                this.loadEventData();
+            },
+            loadEventData() {
+                const events = [
+                    {
+                        start: DayPilot.Date.today().firstDayOfWeek().addDays(1),
+                        end: DayPilot.Date.today().firstDayOfWeek().addDays(2),
+                        resource: "A",
+                        id: 1,
+                        text: "Reservation 1"
+                    },
+                    {
+                        start: DayPilot.Date.today().firstDayOfWeek().addDays(4),
+                        end: DayPilot.Date.today().firstDayOfWeek().addDays(6),
+                        resource: "A",
+                        id: 2,
+                        text: "Reservation 2"
+                    },
+                ];
+                dp.update({events});
+            }
+        };
+        app.init();
+
+
+
+    </script>
+
+    <!-- bottom -->
+</template>
+
+<script src="../helpers/v2/app.js?v=2025.4.6765"></script>
+<!-- /bottom -->
+
+</body>
+</html>
+

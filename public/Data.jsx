@@ -1,0 +1,37 @@
+let data = [
+  {
+    name: "Room 0",
+    id: "R0",
+     expanded: true,
+     fontColor :"red",
+    children: [
+      { name: "Person 1", id: "P1" },
+      { name: "Person 2", id: "P2" },
+      { name: "Person 3", id: "P3" },
+      { name: "Person 4", id: "P4" },
+    ],
+  },
+ 
+  { name: "Room 1", id: "R1" },
+  { name: "Room 2", id: "R2" },
+  { name: "Room 3", id: "R3" },
+  { name: "Room 4", id: "R4" },
+  { name: "Room 5", id: "R5" },
+  { name: "Room 6", id: "R6" },
+  { name: "Room 7", id: "R7" },
+  { name: "Room 8", id: "R8" },
+  { name: "Room 9", id: "R9" },
+  { name: "Room 10", id: "R10" },
+  { name: "Room 11", id: "R11" },
+  { name: "Room 12", id: "R12" },
+  { name: "Room 13", id: "R13" },
+  { name: "Room 14", id: "R14" },
+  { name: "Room 15", id: "R15" },
+  { name: "Room 16", id: "R16" },
+  { name: "Room 17", id: "R17" },
+  { name: "Room 18", id: "R18" },
+  { name: "Room 19", id: "R19" },
+  { name: "Room 20", id: "R20" },
+  { name: "Room 21", id: "R21" },
+];
+export default data

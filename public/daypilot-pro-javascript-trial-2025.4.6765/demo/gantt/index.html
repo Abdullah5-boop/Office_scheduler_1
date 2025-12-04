@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Gantt Chart</title>
+
+    <!-- head -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../helpers/v2/main.css?v=2025.4.6765" type="text/css" rel="stylesheet"/>
+    <script src="../js/daypilot-all.min.js?v=2025.4.6765"></script>
+
+    <!-- /head -->
+</head>
+<body>
+
+<!-- top -->
+<template id="content" data-version="2025.4.6765">
+
+    <!-- /top -->
+
+    <div class="note">
+        Customize the component using <a href="https://builder.daypilot.org/gantt">Gantt Chart UI Builder</a>
+        and download a ready-to-run project.
+
+        Read more about the <a href="https://javascript.daypilot.org/gantt/">JavaScript Gantt Chart</a>.
+    </div>
+
+    <div id="gantt"></div>
+
+    <script type="text/javascript">
+
+        const gantt = new DayPilot.Gantt("gantt", {
+            startDate: DayPilot.Date.today().addDays(-1),
+            days: 60,
+            columns: [
+                {
+                    title: "Name",
+                    width: 50,
+                    property: "text"
+                },
+                {
+                    title: "Info",
+                    width: 50,
+                    property: "info"
+                },
+                {
+                    title: "Duration",
+                    width: 50
+                }
+            ],
+            onBeforeRowHeaderRender: (args) => {
+                const duration = gantt.tasks.businessDuration(args.task);
+                const html = duration.toString("d") + "d " + duration.toString("h") + "h";
+                args.row.columns[2].html = html;
+            },
+            onBeforeTaskRender: (args) => {
+                // args.data.box.html = args.data.text;
+            },
+            onRowMoving: (args) => {
+                //args.position = "forbidden";
+            },
+            onColumnResized: (args) => {
+                console.log(args);
+                console.log(gantt.columns);
+            },
+            contextMenuLink: new DayPilot.Menu({
+                items: [
+                    {
+                        text: "Show link ID", onClick: (args) => {
+                            DayPilot.Modal.alert("Link ID: " + args.source.data.id);
+                        }
+                    },
+                    {
+                        text: "Delete link", onClick: (args) => {
+                            gantt.links.remove(args.source);
+                        }
+                    }
+                ]
+            }),
+            contextMenuTask: new DayPilot.Menu({
+                items: [
+                    {
+                        text: "Show task ID", onClick: (args) => {
+                            DayPilot.Modal.alert("Task ID: " + args.source.id());
+                        }
+                    },
+                    {
+                        text: "Delete task", onClick: (args) => {
+                            gantt.tasks.remove(args.source);
+                        }
+                    }
+                ]
+            }),
+            contextMenuRow: new DayPilot.Menu({
+                items: [
+                    {
+                        text: "Show task ID", onClick: (args) => {
+                            DayPilot.Modal.alert("Task ID: " + args.source.id());
+                        }
+                    },
+                    {
+                        text: "Delete task", onClick: (args) => {
+                            gantt.tasks.remove(args.source);
+                        }
+                    }
+                ]
+            }),
+            onTaskClick: async (args) => {
+
+                const completeLevels = [
+                    {name: "Not started", id: 0},
+                    {name: "In progress", id: 50},
+                    {name: "Completed", id: 100}
+                ];
+
+                const form = [
+                    {name: "Name", id: "text"},
+                    {name: "Start", id: "start", type: "date"},
+                    {name: "End", id: "end", type: "date"},
+                    {name: "Complete", id: "complete", type: "select", options: completeLevels},
+                    {name: "Info", id: "tags.info"}
+                ];
+
+                const modal = await DayPilot.Modal.form(form, args.task.data);
+                if (modal.canceled) {
+                    return;
+                }
+
+                gantt.tasks.update(modal.result);
+
+            },
+            onTaskDoubleClicked: (args) => {
+                alert("Double-clicked: " + args.task.id());
+                console.log(args);
+            },
+            onRowMove: (args) => {
+                console.log(args);
+            },
+            onRowMoved: (args) => {
+                console.log(args);
+            },
+            onLinkCreate: (args) => {
+                console.log(args);
+            },
+            onRowDoubleClick: (args) => {
+                console.log(args);
+            },
+            onRowSelect: (args) => {
+                console.log(args);
+            },
+            onTaskRightClick: (args) => {
+                console.log(args);
+            },
+            onTaskMove: (args) => {
+                console.log("onTaskMove", args);
+            },
+            onTaskMoved: (args) => {
+                console.log("onTaskMoved", args);
+            },
+            onTaskMoving: (args) => {
+                console.log("onTaskMoving", args);
+            },
+            onRowExpand: (args) => {
+                console.log("onRowExpand", args);
+            },
+            onRowCollapse: (args) => {
+                console.log("onRowCollapse", args);
+            },
+        });
+        gantt.init();
+
+        const app = {
+            loadData() {
+
+                const tasks = [];
+                const links = [];
+
+                // generate and load sample tasks
+                let start = DayPilot.Date.today();
+                let last = null;
+                for (let i = 0; i < 5; i++) {
+                    const duration = Math.floor(Math.random() * 3) + 1 + 2; // 1 to 3
+                    const end = start.addDays(duration);
+
+                    const e = {
+                        start: start,
+                        end: end,
+                        id: DayPilot.guid(),
+                        text: "Task " + i,
+                        tags: {
+                            info: "info text"
+                        },
+                        children: [
+                            {
+                                start: start,
+                                end: end,
+                                id: DayPilot.guid(),
+                                text: "Subtask 1",
+                                complete: 100
+                            },
+                            {
+                                start: start,
+                                end: end,
+                                id: DayPilot.guid(),
+                                text: "Subtask 2",
+                                complete: 50
+                            },
+                            {
+                                start: end,
+                                id: DayPilot.guid(),
+                                text: "Milestone 1",
+                                type: "Milestone"
+                            }
+
+                        ]
+                    };
+
+                    tasks.push(e);
+
+                    if (last) {
+                        links.push({
+                            id: DayPilot.guid(),  // optional
+                            from: last,
+                            to: e.id,
+                            type: "FinishToStart"
+                        });
+                    }
+                    last = e.id;
+                    start = end;
+
+                }
+
+                gantt.update({
+                    tasks,
+                    links
+                });
+
+            },
+            init() {
+                this.loadData();
+            }
+        };
+        app.init();
+
+    </script>
+
+    <!-- bottom -->
+</template>
+
+<script src="../helpers/v2/app.js?v=2025.4.6765"></script>
+<!-- /bottom -->
+
+</body>
+</html>
+

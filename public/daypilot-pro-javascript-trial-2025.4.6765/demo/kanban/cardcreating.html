@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kanban Card Creating</title>
+
+    <!-- head -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../helpers/v2/main.css?v=2025.4.6765" type="text/css" rel="stylesheet"/>
+    <script src="../js/daypilot-all.min.js?v=2025.4.6765"></script>
+
+    <!-- /head -->
+
+</head>
+<body>
+
+<!-- top -->
+<template id="content" data-version="2025.4.6765">
+
+    <!-- /top -->
+
+    <style>
+        .add-button {
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #eee;
+            color: #666;
+            text-align: center;
+            line-height: 30px;
+        }
+
+        .add-button:hover {
+            background-color: #ddd;
+        }
+    </style>
+
+    <div class="note">Read more about Kanban <a href="https://doc.daypilot.org/kanban/card-creating/">card
+        creating</a> [doc.daypilot.org].
+    </div>
+
+    <div id="kanban"></div>
+
+    <script type="text/javascript">
+
+        const kanban = new DayPilot.Kanban("kanban", {
+            cellMarginBottom: 40,
+            onBeforeCellRender: (args) => {
+                args.cell.areas = [{
+                    right: 5,
+                    bottom: 5,
+                    width: 100,
+                    height: 30,
+                    html: "Add",
+                    cssClass: "add-button",
+                    action: "JavaScript",
+                    onClick: (clickArgs) => {
+                        app.add(args.cell.column.data.id);
+                    }
+                }];
+            }
+        });
+        kanban.init();
+
+        const app = {
+            async add(columnId) {
+                const modal = await DayPilot.Modal.prompt("New task name:", "Task 3");
+                if (modal.canceled) {
+                    return;
+                }
+                const name = modal.result;
+                kanban.cards.add({id: DayPilot.guid(), name: name, column: columnId, text: "This is a description of " + name + "."});
+            },
+            loadData() {
+                const columns = [
+                    {name: "Analysis", id: "1", barColor: "#f9ba25"},
+                    {name: "Draft", id: "2"},
+                    {name: "Testing", id: "3"}
+                ];
+                const cards = [
+                    {id: 1, "name": "Task 1", column: "1", text: "This is a description of task #1."},
+                    {id: 2, "name": "Task 2", column: "1", text: "This is a description of task #2.", barColor: "#ea3624"},
+                ];
+                kanban.update({columns, cards});
+            },
+            init() {
+                app.loadData();
+            }
+        };
+        app.init();
+
+
+    </script>
+
+    <!-- bottom -->
+</template>
+
+<script src="../helpers/v2/app.js?v=2025.4.6765"></script>
+<!-- /bottom -->
+
+</body>
+</html>
+
