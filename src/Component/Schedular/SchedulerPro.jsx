@@ -3,7 +3,7 @@ import { DayPilotScheduler } from "daypilot-pro-react";
 import data from "../../../public/Data"; // your resources data
 
 export default function SchedulerProTrial() {
-  const [resources, setResources] = useState(data);
+  const [resources] = useState(data);
 
   const [config] = useState({
     startDate: "2026-04-01",
@@ -21,7 +21,7 @@ export default function SchedulerProTrial() {
     eventResizeHandling: "Update",
 
     // Click on row header
-    onRowHeaderClick : args => {
+    onRowHeaderClick : () => {
      
 
         console.log("clicked")

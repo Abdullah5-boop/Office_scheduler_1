@@ -30,6 +30,18 @@
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
+.my-event{
+     background-color: red !important;
+  border-radius: 6px;
+  color: rgb(29, 192, 29);;
+}.scheduler_default_event_bar { 
+  top:0px;left:0px;right:0px;height:4px;background-color:#9dc8e8;
+}
+.scheduler_default_event_bar_inner { 
+  position:absolute;height:4px;background-color:#1066a8;
+}
+
+
 
 @keyframes logo-spin {
   from {
