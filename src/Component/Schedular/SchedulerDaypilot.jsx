@@ -23,25 +23,27 @@ export default function SchedulerDaypilot() {
       resource: "R1",
       barColor: "#4a90e2",
       tags: { category: "category1" },
-      cssClass: "my-event9",
+      cssClass: "my-event",
       fontColor: "red",
       resizeDisabled: false,
       borderColor: "green",
-      // horizontalAlignment: "right",
+      borders :{top:true, bottom:true},
+      horizontalAlignment :"center",
+
     },
   ]);
-  // useEffect(() => {
-  //   const style = window.document.createElement("style");
+  useEffect(() => {
+    const style = window.document.createElement("style");
 
-  //   style.innerHTML = `
-  //   .scheduler_default_event_bar_inner {
-  //     position: absolute !important;
-  //     height: 4px !important;
-  //     background-color: red !important;
-  //   }
-  // `;
-  //   window.document.head.appendChild(style);
-  // }, []);
+    style.innerHTML = `
+    .scheduler_default_event_bar_inner{
+      position: absolute !important;
+      height: 4px !important;
+      background-color: red !important;
+    }
+  `;
+    window.document.head.appendChild(style);
+  }, []);
 
   // const editEvent = (e) => {
   //   console.log("editEvent called ->", e);
@@ -64,7 +66,7 @@ export default function SchedulerDaypilot() {
     events: events,
     eventHeight: 32,
     onBeforeEventRender: (args) => {
-      // console.log("onBeforeEventRender ->", args);
+     
       const eventData = args.data;
       args.data.toolTip = `\n Name: ${eventData.text} \nStart: ${eventData.start} \nEnd: ${eventData.end} \nResource: ${eventData.resource} `;
     },
@@ -98,13 +100,7 @@ export default function SchedulerDaypilot() {
       // }
     },
 
-    onEventMoving: async (args) => {
-      const value = args.resource;
-      console.log("_".repeat(10), "onEventMoving start", "_".repeat(10));
-      console.log(args);
-      console.log("value = ", value);
-      console.log("_".repeat(10), "onEventMoving end", "_".repeat(10));
-    },
+
   });
 
   useEffect(() => {
@@ -119,11 +115,8 @@ export default function SchedulerDaypilot() {
         rows.forEach((row) => {
           row.style.cursor = "pointer";
           row.onclick = () => {
-            const header = row.querySelector(
-              ".scheduler_default_rowheader_inner_text"
-            );
+            const header = row.querySelector(".scheduler_default_rowheader_inner_text");
             console.log("Row clicked ->", header?.innerText);
-
             row.style.backgroundColor =
               row.style.backgroundColor === "yellow" ? "#fff" : "yellow";
           };
@@ -134,12 +127,7 @@ export default function SchedulerDaypilot() {
 
   console.log("Rendering Scheduler component");
 
-  let row_titles = window.document.querySelectorAll(
-    ".scheduler_default_rowheader_inner"
-  );
-
-
-
+  let row_titles = window.document.querySelectorAll(".scheduler_default_rowheader_inner");
   row_titles.forEach((row) => {
     row.addEventListener("click", () => {
       console.log(row.innerText);
@@ -150,7 +138,7 @@ export default function SchedulerDaypilot() {
 
 
 
-  
+
   return (
     <div style={{ height: "100vh" }}>
       <DayPilotScheduler ref={schedulerRef} {...config} events={events} />

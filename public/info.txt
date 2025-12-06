@@ -1,0 +1,55 @@
+1. rowheaders are not clickable 
+2. width calculation : 
+ const start = new Date("2026-04-01T07:00:00");
+const end = new Date("2026-04-01T12:00:00");
+
+const durationInHours = (end - start) / (1000 * 60 * 60);
+const cellWidth = 100; // width of 1 hour in px
+
+const eventWidth = durationInHours * cellWidth;
+console.log("Event width in px:", eventWidth);
+
+3.
+
+
+const [areas] = useState([
+  {
+    id: 1, // Pro & Lite
+    text: "Area 1", // Pro & Lite
+    start: "2026-04-01T08:00:00", // Pro & Lite
+    end: "2026-04-01T12:00:00", // Pro & Lite
+    backColor: "#f0f0f0", // Pro & Lite
+    fontColor: "black", // Pro & Lite
+    borderColor: "blue", // Pro
+    borders: { top: true, bottom: false }, // Pro
+    borderRadius: 5, // Pro
+    cssClass: "custom-area", // Pro & Lite
+    height: 50, // Pro & Lite
+    width: 200, // Pro & Lite
+    top: 10, // Pro & Lite
+    left: 10, // Pro & Lite
+    right: 20, // Pro
+    bottom: 20, // Pro
+    horizontalAlignment: "center", // Pro & Lite
+    verticalAlignment: "top", // Pro
+    visibility: "Visible", // Pro
+    style: "padding:5px; background-color: #ddd;", // Pro & Lite
+    html: "<b>Custom HTML</b>", // Pro
+    icon: "fa fa-star", // Pro
+    image: "https://example.com/image.png", // Pro
+    symbol: "daypilot.svg#minichevron-right-2", // Pro
+    action: "Move", // Pro & Lite
+    bubble: { text: "Hovered!" }, // Pro
+    menu: { items: [{ text: "Menu Item 1" }] }, // Pro
+    nonFloating: true, // Scheduler only, Pro
+    offsetX: 5, // Scheduler only, Pro
+    padding: 10, // Pro
+    toolTip: "This is a tooltip", // Pro
+    onClick: (args) => console.log("Clicked", args), // Pro & Lite
+    onClicked: (args) => console.log("Clicked after default action", args), // Pro & Lite
+    onMouseEnter: (args) => console.log("Mouse enter", args), // Pro & Lite
+    onMouseLeave: (args) => console.log("Mouse leave", args), // Pro & Lite
+    onAfterRender: (args) => console.log("DOM element", args.div), // Pro
+  },
+]);
+4. dom can be access. 
