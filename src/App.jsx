@@ -11,7 +11,7 @@ function App() {
   return (
     <>
      <SchedulerDaypilot></SchedulerDaypilot>
-     <SchedulerProTrial></SchedulerProTrial>
+     {/* <SchedulerProTrial></SchedulerProTrial> */}
      {/* <Modal1></Modal1> */}
     </>
   )
