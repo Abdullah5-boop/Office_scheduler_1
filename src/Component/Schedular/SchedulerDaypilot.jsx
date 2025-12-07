@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { DayPilotScheduler, DayPilot } from "@daypilot/daypilot-lite-react";
 import data from "../../../public/Data";
-// import "../Schedular/"
+import ConnectWalletModal from "../Popup/Modal1";
+
 export default function SchedulerDaypilot() {
-  const schedulerRef = useRef(); // ref to scheduler
+  const schedulerRef = useRef();
+  const newRef = useRef();
+  const [modalOpen, setModalOpen] = useState(false);
 
   const [events] = useState([
     {
@@ -13,8 +16,8 @@ export default function SchedulerDaypilot() {
       end: "2026-04-02T11:00:00",
       resource: "R1",
       barColor: "#4a90e2",
+      cssClass: "my-event",
     },
-
     {
       id: 2,
       text: "Event 2",
@@ -24,37 +27,26 @@ export default function SchedulerDaypilot() {
       barColor: "#4a90e2",
       tags: { category: "category1" },
       cssClass: "my-event",
-      fontColor: "red",
+
       resizeDisabled: false,
       borderColor: "green",
-      borders :{top:true, bottom:true},
-      horizontalAlignment :"center",
-
+      borders: { top: true, bottom: true },
+      horizontalAlignment: "center",
     },
   ]);
+
   useEffect(() => {
     const style = window.document.createElement("style");
-
     style.innerHTML = `
-    .scheduler_default_event_bar_inner{
-      position: absolute !important;
-      height: 4px !important;
-      background-color: red !important;
-    }
-  `;
+      .scheduler_default_event_bar_inner {
+        position: absolute !important;
+        height: 4px !important;
+        background-color: red !important;
+      }
+   
+    `;
     window.document.head.appendChild(style);
   }, []);
-
-  // const editEvent = (e) => {
-  //   console.log("editEvent called ->", e);
-  //   const updated = { ...e.data, text: "Edited Event" };
-  //   setEvents(events.map((ev) => (ev.id === updated.id ? updated : ev)));
-  // };
-
-  // const deleteEvent = (e) => {
-  //   console.log("deleteEvent called ->", e);
-  //   setEvents(events.filter((ev) => ev.id !== e.data.id));
-  // };
 
   const [config, setConfig] = useState({
     startDate: "2026-04-01",
@@ -65,49 +57,76 @@ export default function SchedulerDaypilot() {
     resources: data,
     events: events,
     eventHeight: 32,
+    eventClickHandling: "Select",
+
     onBeforeEventRender: (args) => {
-     
       const eventData = args.data;
-      args.data.toolTip = `\n Name: ${eventData.text} \nStart: ${eventData.start} \nEnd: ${eventData.end} \nResource: ${eventData.resource} `;
+      args.data.toolTip = `
+        Name: ${eventData.text}
+        Start: ${eventData.start}
+        End: ${eventData.end}
+        Resource: ${eventData.resource}
+      `;
     },
 
     eventMoveHandling: "Update",
     eventResizeHandling: "Update",
 
     onEventMoved: (args) => {
-      console.log("_".repeat(10), "onEventMoved start", "_".repeat(10));
-      console.log(args);
-      console.log("_".repeat(10), "onEventMoved end", "_".repeat(10));
+      console.log("onEventMoved ->", args);
     },
+
     onEventResized: (args) => {
       console.log("onEventResized ->", args);
     },
 
     onBeforeRowHeaderRender: (args) => {
-      // console.log("onBeforeRowHeaderRender ->", args);
       args.row.headerHtml = `<span style="user-select: text;">${args.row.name}</span>`;
     },
 
-    onEventClick: async (args) => {
-      console.log("onEventClick ->", args);
-      // if (args.mouse?.button === 2) {
-      //   const menu = new DayPilot.Menu([
-      //     { text: "Edit Event", onClick: () => editEvent(args.e) },
-      //     { text: "Delete Event", onClick: () => deleteEvent(args.e) },
-      //   ]);
+   onEventClick: (args) => {
+  console.log("onEventClick ->", args.div);
+  let el = args.div;
+  let all_class = Array.from(el.classList);
 
-      //   menu.show(args.nativeEvent.clientX, args.nativeEvent.clientY);
-      // }
-    },
+  // Get the DOM element
+  let dom_el = document.querySelector(
+    `.${all_class[all_class.length - 1]}`
+  );
+  console.log("dom_el ->", dom_el);
 
+  // Get the first child and its first class
+  const firstChild = dom_el.firstElementChild;
+  const firstChildClass = firstChild.classList[0]; // get a single class name
+  console.log("first child class =>", firstChildClass);
+
+  // Open modal
+  setModalOpen(true);
+
+  // Inject dynamic CSS for the element and its first child
+  const style = document.createElement("style");
+  style.innerHTML = `
+    .${all_class[all_class.length - 1]} {
+      color: blue !important;
+      font-size: 16px;
+      background: red !important;
+    }
+
+    .${firstChildClass} {
+      
+    }
+  `;
+  document.head.appendChild(style);
+},
 
   });
 
+
+
   useEffect(() => {
-    setConfig((prevConfig) => ({
-      ...prevConfig,
-      onAfterRender: (args) => {
-        console.log("onAfterRender ->", args);
+    setConfig((prev) => ({
+      ...prev,
+      onAfterRender: () => {
         const schedulerDiv = schedulerRef.current?.control?.element;
         if (!schedulerDiv) return;
 
@@ -115,8 +134,10 @@ export default function SchedulerDaypilot() {
         rows.forEach((row) => {
           row.style.cursor = "pointer";
           row.onclick = () => {
-            const header = row.querySelector(".scheduler_default_rowheader_inner_text");
-            console.log("Row clicked ->", header?.innerText);
+            const header = row.querySelector(
+              ".scheduler_default_rowheader_inner_text"
+            );
+            console.log("Row clicked:", header?.innerText);
             row.style.backgroundColor =
               row.style.backgroundColor === "yellow" ? "#fff" : "yellow";
           };
@@ -125,23 +146,39 @@ export default function SchedulerDaypilot() {
     }));
   }, []);
 
-  console.log("Rendering Scheduler component");
+  useEffect(() => {
+    if (!modalOpen) return;
+    console.log(
+      "_".repeat(50),
+      "\n",
+      schedulerRef.current,
+      "\n",
+      "_".repeat(50)
+    );
 
-  let row_titles = window.document.querySelectorAll(".scheduler_default_rowheader_inner");
-  row_titles.forEach((row) => {
-    row.addEventListener("click", () => {
-      console.log(row.innerText);
+    let evetnHandler = window.document.querySelectorAll(
+      ".scheduler_default_event"
+    );
+    // console.log()
+    console.log("evetnHandler useeffect - > ", evetnHandler);
+
+    evetnHandler.forEach((el) => {
+      el.addEventListener("click", () => {
+        console.log("button has ben clicked ", el);
+      });
     });
-    //  console.log(row.innerText);
-  });
-  console.log(row_titles);
-
-
-
+    // console.log()
+  }, [modalOpen]);
 
   return (
-    <div style={{ height: "100vh" }}>
-      <DayPilotScheduler ref={schedulerRef} {...config} events={events} />
+    <div>
+      <h1 className="text-red-500">hello world</h1>
+
+      <div style={{ height: "100vh" }}>
+        <DayPilotScheduler ref={schedulerRef} {...config} events={events} />
+      </div>
+
+      {/* {modalOpen && <ConnectWalletModal onClose={() => setModalOpen(false)} />} */}
     </div>
   );
 }

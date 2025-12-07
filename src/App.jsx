@@ -1,6 +1,6 @@
 
 import './App.css'
-
+// import "/"
 import SchedulerDaypilot from './Component/Schedular/SchedulerDaypilot'
 import SchedulerProTrial from './Component/Schedular/SchedulerPro'
 // import Modal1 from './Component/Popup/Modal1'

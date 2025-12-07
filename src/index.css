@@ -1,5 +1,6 @@
 
-
+/* src/index.css */
+@import "tailwindcss";
 .daypilot-event-inner, .daypilot-cell, .daypilot-row-header {
   user-select: text !important;
   -webkit-user-select: text !important; /* For Safari */
