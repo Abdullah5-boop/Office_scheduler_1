@@ -85,7 +85,7 @@ export default function SchedulerDaypilot() {
     },
 
    onEventClick: (args) => {
-  console.log("onEventClick ->", args.div);
+  
   let el = args.div;
   let all_class = Array.from(el.classList);
 
@@ -93,28 +93,30 @@ export default function SchedulerDaypilot() {
   let dom_el = document.querySelector(
     `.${all_class[all_class.length - 1]}`
   );
+
   console.log("dom_el ->", dom_el);
+ 
 
   // Get the first child and its first class
   const firstChild = dom_el.firstElementChild;
-  const firstChildClass = firstChild.classList[0]; // get a single class name
-  console.log("first child class =>", firstChildClass);
+  const firstChildClass = firstChild.classList[0];
+firstChild.style.backgroundColor="red";
+  console.log("firstChild =>   ", firstChild);
 
   // Open modal
   setModalOpen(true);
 
   // Inject dynamic CSS for the element and its first child
+
   const style = document.createElement("style");
+  
   style.innerHTML = `
     .${all_class[all_class.length - 1]} {
       color: blue !important;
       font-size: 16px;
-      background: red !important;
+      background:red !important;
     }
-
-    .${firstChildClass} {
-      
-    }
+    .${firstChildClass} { }
   `;
   document.head.appendChild(style);
 },
