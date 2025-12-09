@@ -84,33 +84,34 @@ export default function SchedulerDaypilot() {
       args.row.headerHtml = `<span style="user-select: text;">${args.row.name}</span>`;
     },
 
-   onEventClick: (args) => {
-  
-  let el = args.div;
-  let all_class = Array.from(el.classList);
+    onEventClick: (args) => {
 
-  // Get the DOM element
-  let dom_el = document.querySelector(
-    `.${all_class[all_class.length - 1]}`
-  );
+      let el = args.div;
+      let all_class = Array.from(el.classList);
 
-  console.log("dom_el ->", dom_el);
- 
+      // Get the DOM element
+      let dom_el = document.querySelector(
+        `.${all_class[all_class.length - 1]}`
+      );
 
-  // Get the first child and its first class
-  const firstChild = dom_el.firstElementChild;
-  const firstChildClass = firstChild.classList[0];
-firstChild.style.backgroundColor="red";
-  console.log("firstChild =>   ", firstChild);
+      console.log("dom_el ->", dom_el);
+      // Get the first child and its first class
+      const firstChild = dom_el.firstElementChild;
+      const firstChildClass = firstChild.classList[0];
+      firstChild.style.backgroundColor = "red";
+      firstChild.style.color = "white";
+      firstChild.style.padding = "6px";
+      console.log("firstChild =>   ", firstChild);
+      dom_el.appendChild(firstChild.cloneNode(true))
 
-  // Open modal
-  setModalOpen(true);
+      // Open modal
+      setModalOpen(true);
 
-  // Inject dynamic CSS for the element and its first child
+      // Inject dynamic CSS for the element and its first child
 
-  const style = document.createElement("style");
-  
-  style.innerHTML = `
+      const style = document.createElement("style");
+
+      style.innerHTML = `
     .${all_class[all_class.length - 1]} {
       color: blue !important;
       font-size: 16px;
@@ -118,8 +119,15 @@ firstChild.style.backgroundColor="red";
     }
     .${firstChildClass} { }
   `;
-  document.head.appendChild(style);
-},
+
+
+      document.head.appendChild(style);
+
+
+      const newScript = window.document.createElement("script");
+      newScript.textContent=`console.log("Script injected!");`
+      document.head.appendChild(newScript)
+    },
 
   });
 
@@ -158,11 +166,10 @@ firstChild.style.backgroundColor="red";
       "_".repeat(50)
     );
 
-    let evetnHandler = window.document.querySelectorAll(
-      ".scheduler_default_event"
+    let evetnHandler = window.document.querySelectorAll(".scheduler_default_event"
     );
     // console.log()
-    console.log("evetnHandler useeffect - > ", evetnHandler);
+
 
     evetnHandler.forEach((el) => {
       el.addEventListener("click", () => {
